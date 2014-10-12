@@ -18,19 +18,20 @@ namespace Snake.Components
         private int nextYDirection;
         private int movementTimer;
         private int movementTresholdMilliseconds = 200;
+        private readonly Vector2 tileSize;
         
         public int X { get { return Head.X; } }
         public int Y { get { return Head.Y; } }
 
-        public Snake(GameContentManager contentManager, int xStart, int yStart, int initialLength, int xDirection, int yDirection) {
+        public Snake(GameContentManager contentManager, int xStart, int yStart, int initialLength, int xDirection, int yDirection, Vector2 tileSize) {
             this.contentManager = contentManager;
+            this.tileSize = tileSize;
             Head = CreateHead(xStart, yStart);
             ChangeDirection(xDirection, yDirection);
             tail = new SortedList<int, SnakePart>();
             for (int i = 1; i < initialLength; i++) {
                 AddTail(Head.X - i, Head.Y);
             }
-
             newParts = new Queue<int>();
         }
 
@@ -110,6 +111,7 @@ namespace Snake.Components
             return new SnakePart {
                 X = x,
                 Y = y,
+                TileSize = tileSize,
                 Texture = "darkgreen"
             };
         }
@@ -118,6 +120,7 @@ namespace Snake.Components
             return new SnakePart {
                 X = x,
                 Y = y,
+                TileSize = tileSize,
                 Texture = "lightblue"
             };
         }
@@ -126,10 +129,10 @@ namespace Snake.Components
             public int X { get; set; }
             public int Y { get; set; }
             public string Texture { private get; set; }
-            private int tileSizeX = 32, tileSizeY = 32;
+            public Vector2 TileSize { get; set; }
 
             public void Draw(GameContentManager contentManager, SpriteBatch spriteBatch) {
-                spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * tileSizeX, Y * tileSizeY), Color.White);
+                spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * (int)TileSize.X, Y * (int)TileSize.Y), Color.White);
             }
         }
     }

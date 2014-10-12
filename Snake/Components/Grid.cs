@@ -11,20 +11,14 @@ namespace Snake.Components {
         public const int WALL_TILE = 1;
         public const int POWERUP_TILE = 2;
 
-        private int tileSizeX = 32, tileSizeY = 32;
-
         private readonly int[,] grid;
         private readonly Random random = new Random();
-
+        private readonly Vector2 tileSize;
         private readonly GameContentManager contentManager;
 
-        public Grid(GameContentManager contentManager, int x, int y) {
-            grid = new int[x, y];
-            this.contentManager = contentManager;
-        }
-
-        public Grid(GameContentManager contentManager, int[,] grid) {
+        public Grid(GameContentManager contentManager, Vector2 tileSize, int[,] grid) {
             this.grid = grid;
+            this.tileSize = tileSize;
             this.contentManager = contentManager;
         }
 
@@ -58,7 +52,7 @@ namespace Snake.Components {
             for (int y = 0; y <= grid.GetUpperBound(1); y++) {
                 for (int x = 0; x <= grid.GetUpperBound(0); x++) {
                     int value = grid[x, y];
-                    DrawTile(value, x * tileSizeX, y * tileSizeY, spriteBatch);
+                    DrawTile(value, x * (int)tileSize.X, y * (int)tileSize.Y, spriteBatch);
                 }
             }
         }

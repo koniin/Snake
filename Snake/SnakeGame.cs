@@ -12,9 +12,6 @@ using Snake.GameBase;
 #endregion
 
 namespace Snake {
-    /// <summary>
-    /// This is the main type for your game
-    /// </summary>
     public class SnakeGame : Game {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -25,6 +22,8 @@ namespace Snake {
         private CollisionManager collisionManager;
         private GameContentManager contentManager;
         private GameState gameState;
+
+        private readonly Vector2 tileSize = new Vector2(32, 32);
 
         public SnakeGame()
             : base() {
@@ -39,8 +38,8 @@ namespace Snake {
             collisionManager = new CollisionManager();
             contentManager = new GameContentManager(new XnaContentManagerAdapter(Content));
             score = new Score(contentManager, 290, 250);
-            snake = new Snake.Components.Snake(contentManager, 4, 4, 4, 1, 0);
-            grid = new Grid(contentManager, GridLoader.GetGrid("level1"));
+            snake = new Snake.Components.Snake(contentManager, 4, 4, 4, 1, 0, tileSize);
+            grid = new Grid(contentManager, tileSize, GridLoader.GetGrid("level1"));
             grid.AddRandomPowerUp(snake.GetPositions());
 
             gameState = GameState.Playing;
@@ -63,14 +62,11 @@ namespace Snake {
         }
 
         protected override void Update(GameTime gameTime) {
+            HandleInput(Keyboard.GetState());
+
             if (gameState == GameState.Playing) {
-
-                HandleInput(Keyboard.GetState());
-
                 snake.Upate(gameTime);
-
                 HandleCollisions();
-
                 base.Update(gameTime);
             }
         }

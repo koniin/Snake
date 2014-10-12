@@ -36,6 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\CollisionManager.cs" />
+    <Compile Include="Components\GridLoader.cs" />
     <Compile Include="GameBase\GameState.cs" />
     <Compile Include="Components\Grid.cs" />
     <Compile Include="GameBase\IContentLoader.cs" />
