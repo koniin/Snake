@@ -16,7 +16,7 @@ namespace Snake.Components
         }
 
         public void Increase() {
-            score += 1;
+            score++;
         }
 
         public void Draw(SpriteBatch spriteBatch) {

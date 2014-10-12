@@ -5,14 +5,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Snake.Components
-{
-    public class Grid
-    {
+namespace Snake.Components {
+    public class Grid {
         public const int EMPTY_TILE = 0;
         public const int WALL_TILE = 1;
         public const int POWERUP_TILE = 2;
-        
+
+        private int tileSizeX = 32, tileSizeY = 32;
+
         private readonly int[,] grid;
         private readonly Random random = new Random();
 
@@ -53,7 +53,6 @@ namespace Snake.Components
             return positions;
         }
 
-        private int tileSizeX = 32, tileSizeY = 32;
         public void Draw(SpriteBatch spriteBatch)
         {
             for (int x = 0; x <= grid.GetUpperBound(0); x++) {
@@ -65,11 +64,7 @@ namespace Snake.Components
         }
 
         private void DrawTile(int value, int x, int y, SpriteBatch spriteBatch) {
-            
-            Color color = Color.White;
-            if (value == EMPTY_TILE)
-                color = Color.White;
-            else if (value == POWERUP_TILE)
+            if (value == POWERUP_TILE)
                 spriteBatch.Draw(contentManager.Get<Texture2D>("red"), new Vector2(x, y), Color.Red);
             else if (value == WALL_TILE)
                 spriteBatch.Draw(contentManager.Get<Texture2D>("darkblue"), new Vector2(x, y), Color.DarkBlue);
