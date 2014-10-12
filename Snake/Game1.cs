@@ -22,11 +22,22 @@ namespace Snake {
         private Snake.Components.Snake snake;
         private Score score;
         private CollisionManager collisionManager;
+        private ContentManager contentManager;
+        private GameState gameState;
+
+        private enum GameState {
+            Menu,
+            GameOver,
+            Playing
+        };
 
         public Game1()
             : base() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 640;  // set this value to the desired width of your window
+            graphics.PreferredBackBufferHeight = 640;   // set this value to the desired height of your window
+            graphics.ApplyChanges();
         }
 
         /// <summary>
@@ -37,22 +48,35 @@ namespace Snake {
         /// </summary>
         protected override void Initialize() {
             collisionManager = new CollisionManager();
-            score = new Score(0, 12);
-            grid = new Grid(new int[,] {
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
-                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 } 
+            contentManager = new ContentManager();
+            score = new Score(contentManager, 290, 250);
+            grid = new Grid(contentManager, new int[,] {
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
+                { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1 } 
             });
-            snake = new Snake.Components.Snake(4, 4, 4, 1, 0);
+            snake = new Snake.Components.Snake(contentManager, 4, 4, 4, 1, 0);
 
             grid.AddRandomPowerUp(snake.GetPositions());
+
+            gameState = GameState.Playing;
 
             base.Initialize();
         }
@@ -65,7 +89,7 @@ namespace Snake {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            contentManager.LoadAllContent(Content);
         }
 
         /// <summary>
@@ -73,7 +97,7 @@ namespace Snake {
         /// all content.
         /// </summary>
         protected override void UnloadContent() {
-            // TODO: Unload any non ContentManager content here
+            contentManager.UnloadAll();
         }
 
         /// <summary>
@@ -82,14 +106,34 @@ namespace Snake {
         /// </summary>
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (gameState == GameState.Playing) {
 
-            snake.Upate();
+                HandleInput(Keyboard.GetState());
+
+                snake.Upate(gameTime);
+
+                HandleCollisions();
+
+                base.Update(gameTime);
+            }
+        }
+
+        public void HandleInput(KeyboardState keyState) {
+            if (keyState.IsKeyDown(Keys.Escape))
+                Exit();
             
-            HandleCollisions();
-            
-            base.Update(gameTime);
+            if (keyState.IsKeyDown(Keys.W)) {
+                snake.ChangeDirection(0, -1);
+            }
+            else if (keyState.IsKeyDown(Keys.S)) {
+                snake.ChangeDirection(0, 1);
+            }
+            else if (keyState.IsKeyDown(Keys.A)) {
+                snake.ChangeDirection(-1, 0);
+            }
+            else if (keyState.IsKeyDown(Keys.D)) {
+                snake.ChangeDirection(1, 0);
+            }
         }
 
         private void HandleCollisions() {
@@ -101,8 +145,9 @@ namespace Snake {
                 score.Increase();
             }
 
-            if (collision == CollisionType.Fatal)
-                throw new NotImplementedException("Fatal collision - GAME OVER");
+            if (collision == CollisionType.Fatal) {
+                gameState = GameState.GameOver;
+            }
         }
 
         /// <summary>
@@ -112,9 +157,16 @@ namespace Snake {
         protected override void Draw(GameTime gameTime) {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
+            spriteBatch.Begin();
+
             grid.Draw(spriteBatch);
             snake.Draw(spriteBatch);
             score.Draw(spriteBatch);
+
+            if(gameState == GameState.GameOver)
+                spriteBatch.DrawString(contentManager.Get<SpriteFont>("Consolas78"), "GAME OVER", new Vector2(70, 150), Color.Black);
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

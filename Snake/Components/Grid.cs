@@ -15,12 +15,16 @@ namespace Snake.Components
         private readonly int[,] grid;
         private readonly Random random = new Random();
 
-        public Grid(int x, int y) {
+        private readonly ContentManager contentManager;
+
+        public Grid(ContentManager contentManager, int x, int y) {
             grid = new int[x, y];
+            this.contentManager = contentManager;
         }
 
-        public Grid(int[,] grid) {
+        public Grid(ContentManager contentManager, int[,] grid) {
             this.grid = grid;
+            this.contentManager = contentManager;
         }
 
         public bool AddRandomPowerUp(List<Vector2> occupied) {
@@ -48,29 +52,26 @@ namespace Snake.Components
             return positions;
         }
 
+        private int tileSizeX = 32, tileSizeY = 32;
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int i = 0; i <= grid.GetUpperBound(0); i++) {
-                for (int j = 0; j <= grid.GetUpperBound(1); j++) {
-                    int value = grid[i, j];
-                    DrawTile(value, i, j, spriteBatch);
+            for (int x = 0; x <= grid.GetUpperBound(0); x++) {
+                for (int y = 0; y <= grid.GetUpperBound(1); y++) {
+                    int value = grid[x, y];
+                    DrawTile(value, x * tileSizeX, y * tileSizeY, spriteBatch);
                 }
             }
         }
 
         private void DrawTile(int value, int x, int y, SpriteBatch spriteBatch) {
-            throw new NotImplementedException();
-            /*
+            
             Color color = Color.White;
             if (value == EMPTY_TILE)
                 color = Color.White;
             else if (value == POWERUP_TILE)
-                color = Color.Green;
+                spriteBatch.Draw(contentManager.Get<Texture2D>("red"), new Vector2(x, y), Color.Red);
             else if (value == WALL_TILE)
-                color = Color.Blue;
-
-            renderEngine.Draw(x, y, value.ToString(), color);
-             * */
+                spriteBatch.Draw(contentManager.Get<Texture2D>("darkblue"), new Vector2(x, y), Color.DarkBlue);
         }
 
         public void Clear(int x, int y) {

@@ -1,12 +1,15 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 namespace Snake.Components
 {
     public class Score {
         private int score = 0;
         private readonly int x, y;
+        private readonly ContentManager contentManager;
 
-        public Score(int x, int y) {
+        public Score(ContentManager contentManager, int x, int y) {
+            this.contentManager = contentManager;
             this.x = x;
             this.y = y;
         }
@@ -16,8 +19,7 @@ namespace Snake.Components
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            throw new NotImplementedException();
-            //renderEngine.Draw(x, y, "Score: " + score);
+            spriteBatch.DrawString(contentManager.Get<SpriteFont>("Consolas78"), score.ToString(), new Vector2(x, y), Color.White);
         }
     }
 }

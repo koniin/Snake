@@ -8,15 +8,21 @@ namespace Snake.Components
 {
     public class Snake {
         private readonly SortedList<int, SnakePart> tail;
-        private readonly Queue<int> newParts; 
+        private readonly Queue<int> newParts;
+        private readonly ContentManager contentManager;
         private SnakePart Head { get; set; }
         private int currentXDirection;
         private int currentYDirection;
+        private int nextXDirection;
+        private int nextYDirection;
+        private int movementTimer;
+        private int movementTresholdMilliseconds = 200;
 
         public int X { get { return Head.X; } }
         public int Y { get { return Head.Y; } }
 
-        public Snake(int xStart, int yStart, int initialLength, int xDirection, int yDirection) {
+        public Snake(ContentManager contentManager, int xStart, int yStart, int initialLength, int xDirection, int yDirection) {
+            this.contentManager = contentManager;
             Head = CreateHead(xStart, yStart);
             ChangeDirection(xDirection, yDirection);
             tail = new SortedList<int, SnakePart>();
@@ -26,36 +32,46 @@ namespace Snake.Components
 
             newParts = new Queue<int>();
         }
-        
-        public void Upate() {
-            int nextX = Head.X, nextY = Head.Y;
-            Head.X += currentXDirection;
-            Head.Y += currentYDirection;
-            foreach (var part in tail) {
-                int lastX = part.Value.X, lastY = part.Value.Y;
-                part.Value.X = nextX;
-                part.Value.Y = nextY;
-                nextX = lastX;
-                nextY = lastY;
-            }
-            if (newParts.Count > 0) {
-                AddTail(nextX, nextY);
-                newParts.Dequeue();
+
+        public void Upate(GameTime gameTime) {
+            movementTimer += gameTime.ElapsedGameTime.Milliseconds;
+            if (movementTimer >= movementTresholdMilliseconds) {
+                currentXDirection = nextXDirection;
+                currentYDirection = nextYDirection;
+                movementTimer = 0;
+
+                int nextX = Head.X, nextY = Head.Y;
+                Head.X += currentXDirection;
+                Head.Y += currentYDirection;
+                foreach (var part in tail) {
+                    int lastX = part.Value.X, lastY = part.Value.Y;
+                    part.Value.X = nextX;
+                    part.Value.Y = nextY;
+                    nextX = lastX;
+                    nextY = lastY;
+                }
+                if (newParts.Count > 0) {
+                    AddTail(nextX, nextY);
+                    newParts.Dequeue();
+                }
             }
         }
 
         public void Draw(SpriteBatch spriteBatch) {
-            throw new NotImplementedException();
-            /*
-            Head.Draw(renderEngine);
             foreach (var part in tail) {
-                part.Value.Draw(renderEngine);
-            }*/
+                part.Value.Draw(contentManager, spriteBatch);
+            }
+            Head.Draw(contentManager, spriteBatch);
         }
 
         public void ChangeDirection(int xDirection, int yDirection) {
-            currentXDirection = xDirection;
-            currentYDirection = yDirection;
+            if (currentXDirection != 0 && xDirection != 0 || currentYDirection != 0 && yDirection != 0)
+                return;
+            if (nextXDirection != 0 && xDirection != 0 || nextYDirection != 0 && yDirection != 0)
+                return;
+
+            nextXDirection = xDirection;
+            nextYDirection = yDirection;
         }
 
         public void AddTail() {
@@ -80,7 +96,7 @@ namespace Snake.Components
             return new SnakePart {
                 X = x,
                 Y = y,
-                Texture = "o"
+                Texture = "darkgreen"
             };
         }
 
@@ -88,7 +104,7 @@ namespace Snake.Components
             return new SnakePart {
                 X = x,
                 Y = y,
-                Texture = "x"
+                Texture = "lightblue"
             };
         }
 
@@ -97,8 +113,8 @@ namespace Snake.Components
             public int Y { get; set; }
             public string Texture { private get; set; }
 
-            public void Draw() {
-                throw new NotImplementedException();
+            public void Draw(ContentManager contentManager, SpriteBatch spriteBatch) {
+                spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * 32, Y * 32), Color.White);
             }
         }
     }

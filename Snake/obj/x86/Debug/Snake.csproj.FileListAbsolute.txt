@@ -23,3 +23,8 @@ C:\Code\Snake\Snake\bin\Windows\Debug\SharpDX.Direct3D9.xml
 C:\Code\Snake\Snake\obj\x86\Debug\Snake.csprojResolveAssemblyReference.cache
 C:\Code\Snake\Snake\obj\x86\Debug\Snake.exe
 C:\Code\Snake\Snake\obj\x86\Debug\Snake.pdb
+C:\Code\Snake\Snake\bin\Windows\Debug\Content\darkblue.xnb
+C:\Code\Snake\Snake\bin\Windows\Debug\Content\darkgreen.xnb
+C:\Code\Snake\Snake\bin\Windows\Debug\Content\lightblue.xnb
+C:\Code\Snake\Snake\bin\Windows\Debug\Content\red.xnb
+C:\Code\Snake\Snake\bin\Windows\Debug\Content\Consolas78.xnb
