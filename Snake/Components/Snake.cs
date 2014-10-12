@@ -18,7 +18,7 @@ namespace Snake.Components
         private int nextYDirection;
         private int movementTimer;
         private int movementTresholdMilliseconds = 200;
-
+        
         public int X { get { return Head.X; } }
         public int Y { get { return Head.Y; } }
 
@@ -37,25 +37,38 @@ namespace Snake.Components
         public void Upate(GameTime gameTime) {
             movementTimer += gameTime.ElapsedGameTime.Milliseconds;
             if (movementTimer >= movementTresholdMilliseconds) {
-                currentXDirection = nextXDirection;
-                currentYDirection = nextYDirection;
                 movementTimer = 0;
 
+                currentXDirection = nextXDirection;
+                currentYDirection = nextYDirection;
+
                 int nextX = Head.X, nextY = Head.Y;
-                Head.X += currentXDirection;
-                Head.Y += currentYDirection;
-                foreach (var part in tail) {
-                    int lastX = part.Value.X, lastY = part.Value.Y;
-                    part.Value.X = nextX;
-                    part.Value.Y = nextY;
-                    nextX = lastX;
-                    nextY = lastY;
-                }
-                if (newParts.Count > 0) {
-                    AddTail(nextX, nextY);
-                    newParts.Dequeue();
-                }
+                UpdateHead();
+                UpdateTail(ref nextX, ref nextY);
+                AddTailPart(nextX, nextY);
             }
+        }
+
+        private void AddTailPart(int nextX, int nextY) {
+            if (newParts.Count > 0) {
+                AddTail(nextX, nextY);
+                newParts.Dequeue();
+            }
+        }
+
+        private void UpdateTail(ref int nextX, ref int nextY) {
+            foreach (var part in tail) {
+                int lastX = part.Value.X, lastY = part.Value.Y;
+                part.Value.X = nextX;
+                part.Value.Y = nextY;
+                nextX = lastX;
+                nextY = lastY;
+            }
+        }
+
+        private void UpdateHead() {
+            Head.X += currentXDirection;
+            Head.Y += currentYDirection;
         }
 
         public void Draw(SpriteBatch spriteBatch) {
@@ -113,9 +126,10 @@ namespace Snake.Components
             public int X { get; set; }
             public int Y { get; set; }
             public string Texture { private get; set; }
+            private int tileSizeX = 32, tileSizeY = 32;
 
             public void Draw(GameContentManager contentManager, SpriteBatch spriteBatch) {
-                spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * 32, Y * 32), Color.White);
+                spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * tileSizeX, Y * tileSizeY), Color.White);
             }
         }
     }

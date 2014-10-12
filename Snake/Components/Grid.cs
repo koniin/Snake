@@ -55,8 +55,8 @@ namespace Snake.Components {
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int x = 0; x <= grid.GetUpperBound(0); x++) {
-                for (int y = 0; y <= grid.GetUpperBound(1); y++) {
+            for (int y = 0; y <= grid.GetUpperBound(1); y++) {
+                for (int x = 0; x <= grid.GetUpperBound(0); x++) {
                     int value = grid[x, y];
                     DrawTile(value, x * tileSizeX, y * tileSizeY, spriteBatch);
                 }
