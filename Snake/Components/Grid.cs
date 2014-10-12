@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Snake.GameBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,14 +16,14 @@ namespace Snake.Components
         private readonly int[,] grid;
         private readonly Random random = new Random();
 
-        private readonly ContentManager contentManager;
+        private readonly GameContentManager contentManager;
 
-        public Grid(ContentManager contentManager, int x, int y) {
+        public Grid(GameContentManager contentManager, int x, int y) {
             grid = new int[x, y];
             this.contentManager = contentManager;
         }
 
-        public Grid(ContentManager contentManager, int[,] grid) {
+        public Grid(GameContentManager contentManager, int[,] grid) {
             this.grid = grid;
             this.contentManager = contentManager;
         }

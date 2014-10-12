@@ -36,11 +36,14 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Components\CollisionManager.cs" />
+    <Compile Include="GameBase\GameState.cs" />
     <Compile Include="Components\Grid.cs" />
+    <Compile Include="GameBase\IContentLoader.cs" />
     <Compile Include="Components\Score.cs" />
     <Compile Include="Components\Snake.cs" />
-    <Compile Include="ContentManager.cs" />
-    <Compile Include="Game1.cs" />
+    <Compile Include="GameBase\XnaContentManagerWrapper.cs" />
+    <Compile Include="GameBase\GameContentManager.cs" />
+    <Compile Include="SnakeGame.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

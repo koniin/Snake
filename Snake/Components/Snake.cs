@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Snake.GameBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Snake.Components
     public class Snake {
         private readonly SortedList<int, SnakePart> tail;
         private readonly Queue<int> newParts;
-        private readonly ContentManager contentManager;
+        private readonly GameContentManager contentManager;
         private SnakePart Head { get; set; }
         private int currentXDirection;
         private int currentYDirection;
@@ -21,7 +22,7 @@ namespace Snake.Components
         public int X { get { return Head.X; } }
         public int Y { get { return Head.Y; } }
 
-        public Snake(ContentManager contentManager, int xStart, int yStart, int initialLength, int xDirection, int yDirection) {
+        public Snake(GameContentManager contentManager, int xStart, int yStart, int initialLength, int xDirection, int yDirection) {
             this.contentManager = contentManager;
             Head = CreateHead(xStart, yStart);
             ChangeDirection(xDirection, yDirection);
@@ -113,7 +114,7 @@ namespace Snake.Components
             public int Y { get; set; }
             public string Texture { private get; set; }
 
-            public void Draw(ContentManager contentManager, SpriteBatch spriteBatch) {
+            public void Draw(GameContentManager contentManager, SpriteBatch spriteBatch) {
                 spriteBatch.Draw(contentManager.Get<Texture2D>(Texture), new Vector2(X * 32, Y * 32), Color.White);
             }
         }

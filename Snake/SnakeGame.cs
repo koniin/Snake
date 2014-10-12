@@ -8,13 +8,14 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Storage;
 using Microsoft.Xna.Framework.GamerServices;
 using Snake.Components;
+using Snake.GameBase;
 #endregion
 
 namespace Snake {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Game {
+    public class SnakeGame : Game {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
@@ -22,16 +23,10 @@ namespace Snake {
         private Snake.Components.Snake snake;
         private Score score;
         private CollisionManager collisionManager;
-        private ContentManager contentManager;
+        private GameContentManager contentManager;
         private GameState gameState;
 
-        private enum GameState {
-            Menu,
-            GameOver,
-            Playing
-        };
-
-        public Game1()
+        public SnakeGame()
             : base() {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
@@ -40,16 +35,11 @@ namespace Snake {
             graphics.ApplyChanges();
         }
 
-        /// <summary>
-        /// Allows the game to perform any initialization it needs to before starting to run.
-        /// This is where it can query for any required services and load any non-graphic
-        /// related content.  Calling base.Initialize will enumerate through any components
-        /// and initialize them as well.
-        /// </summary>
         protected override void Initialize() {
             collisionManager = new CollisionManager();
-            contentManager = new ContentManager();
+            contentManager = new GameContentManager(new XnaContentManagerAdapter(Content));
             score = new Score(contentManager, 290, 250);
+            snake = new Snake.Components.Snake(contentManager, 4, 4, 4, 1, 0);
             grid = new Grid(contentManager, new int[,] {
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1 }, 
                 { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
@@ -72,8 +62,6 @@ namespace Snake {
                 { 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1 }, 
                 { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1 } 
             });
-            snake = new Snake.Components.Snake(contentManager, 4, 4, 4, 1, 0);
-
             grid.AddRandomPowerUp(snake.GetPositions());
 
             gameState = GameState.Playing;
@@ -81,30 +69,20 @@ namespace Snake {
             base.Initialize();
         }
 
-        /// <summary>
-        /// LoadContent will be called once per game and is the place to load
-        /// all of your content.
-        /// </summary>
         protected override void LoadContent() {
-            // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            contentManager.LoadAllContent(Content);
+            contentManager.Add<Texture2D>("darkblue");
+            contentManager.Add<Texture2D>("darkgreen");
+            contentManager.Add<Texture2D>("red");
+            contentManager.Add<Texture2D>("lightblue");
+            contentManager.Add<SpriteFont>("Consolas78");
         }
 
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
         protected override void UnloadContent() {
             contentManager.UnloadAll();
         }
 
-        /// <summary>
-        /// Allows the game to run logic such as updating the world,
-        /// checking for collisions, gathering input, and playing audio.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime) {
             if (gameState == GameState.Playing) {
 
@@ -118,10 +96,27 @@ namespace Snake {
             }
         }
 
-        public void HandleInput(KeyboardState keyState) {
+        protected override void Draw(GameTime gameTime) {
+            GraphicsDevice.Clear(Color.CornflowerBlue);
+
+            spriteBatch.Begin();
+
+            grid.Draw(spriteBatch);
+            snake.Draw(spriteBatch);
+            score.Draw(spriteBatch);
+
+            if (gameState == GameState.GameOver)
+                DrawGameOver();
+
+            spriteBatch.End();
+
+            base.Draw(gameTime);
+        }
+
+        private void HandleInput(KeyboardState keyState) {
             if (keyState.IsKeyDown(Keys.Escape))
                 Exit();
-            
+
             if (keyState.IsKeyDown(Keys.W)) {
                 snake.ChangeDirection(0, -1);
             }
@@ -150,25 +145,8 @@ namespace Snake {
             }
         }
 
-        /// <summary>
-        /// This is called when the game should draw itself.
-        /// </summary>
-        /// <param name="gameTime">Provides a snapshot of timing values.</param>
-        protected override void Draw(GameTime gameTime) {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
-            spriteBatch.Begin();
-
-            grid.Draw(spriteBatch);
-            snake.Draw(spriteBatch);
-            score.Draw(spriteBatch);
-
-            if(gameState == GameState.GameOver)
-                spriteBatch.DrawString(contentManager.Get<SpriteFont>("Consolas78"), "GAME OVER", new Vector2(70, 150), Color.Black);
-
-            spriteBatch.End();
-
-            base.Draw(gameTime);
+        private void DrawGameOver() {
+            spriteBatch.DrawString(contentManager.Get<SpriteFont>("Consolas78"), "GAME OVER", new Vector2(70, 150), Color.Black);
         }
     }
 }
